@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  title: Queue & Applications API Documentation
+  description: API to manage queue operations including creation, retrieval, updating, and deletion of queues, and application filtering based on queue rules.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3300
+    description: Local development server
+  - url: http://_____:3300
+    description: Deployment server
+
+tags:
+  - name: ORC-Intelligence
+    description: All the ORC related Services
+
+paths:
+  /api/ocr/docBasedAlert:
+    post:
+      tags:
+        - ORC-Intelligence
+      summary: "Get isMatched & Message for given document and infoToMatch"
+      description: |
+        This API checks a given document for matching information based on the provided 'infoToMatch' fields.
+        Body for Bank Statement:
+        ```json
+        {
+          "docURL": "https://gatehouse.blob.core.windows.net/rajatdoc/BS1_karen.pdf",
+          "docType": "Bank Statement",
+          "infoToMatch": {
+            "Applicants": ["Karen Bridges"],
+            "statementDate": "2024-12-09T00:00:00Z"
+          }
+        }
+        ```
+        Body for Pay Slip: (for future)
+        ```json
+        {
+          "docURL": "https://gatehouse.blob.core.windows.net/rajatdoc/PS1.pdf",
+          "docType": "Pay Slip",
+          "infoToMatch": [
+            {
+              "applicantName": "Lacey Borke",
+              "applicantSalary": "$405.79",
+              "submittedDate": "2024-03-28T00:00:00.000Z"
+            },
+            {
+              "applicantName": "Lacey Borke",
+              "applicantSalary": "£1,099",
+              "submittedDate": "2024-04-12T00:00:00.000Z"
+            },
+            {
+              "applicantName": "D R Steve",
+              "applicantSalary": "3,659.12",
+              "submittedDate": "2024-03-22T00:00:00.000Z"
+            }
+          ]
+        }
+        ```
+        Body For Valuation Report is provided in body :
+      operationId: "docBasedAlert"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                docURL:
+                  type: string
+                  description: "URL to the document to be checked."
+                  example: "https://gatehouse.blob.core.windows.net/application/val_report_correct_test.pdf"
+                docType:
+                  type: string
+                  description: "Type of Doc : Valuation Report ,Bank Statement"
+                  example: "Valuation Report"
+                infoToMatch:
+                  type: object
+                  description: "An object containing the fields and values to match in the document."
+                  additionalProperties:
+                    type: string
+                  example:
+                    Property Type: "Detached House"
+                    Floors: "1"
+                    Bedroom: "4"
+                    Kitchens: "1"
+                    Address: "1 The Ryding Shenley Brook End Milton Keynes – MK57FW"
+      responses:
+        "200":
+          description: "Successfully matched document and generated alert message."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isAlert:
+                    type: boolean
+                    description: "Indicates if an alert was triggered."
+                    example: true
+                  AlertMessage:
+                    type: string
+                    description: "The generated alert message."
+                    example: "Application shows detached house-property type, 2-floor, 3-bedroom, 1-kitchen, at 14 wilimin grove loughton milton keyn mk5 85007, while the valuation report shows false-detached house, false-if flat maisonette on what floor, 2-bedroom, 1-kitchen, at 15 killarney crescent west thurrock gray. Please review and resolve."
+        "400":
+          description: "Bad request due to invalid input or missing parameters."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request body or missing parameters."
+        "500":
+          description: "Server error, failure during document processing."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error occurred while processing the document."
+
+  /api/ocr/docTypeusingAzure:
+    post:
+      tags:
+        - ORC-Intelligence
+      summary: "Get document type using Azure AI services"
+      description: "This API determines the document type (e.g., valuation report, ID proof) using Azure services."
+      operationId: "docTypeusingAzure"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                docURL:
+                  type: string
+                  description: "URL to the document whose type is to be determined."
+                  example: "https://gatehouse.blob.core.windows.net/application/val report 2.pdf"
+      responses:
+        "200":
+          description: "Successfully determined document type."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  DocType:
+                    type: string
+                    description: "The determined type of the document."
+                    example: "Valuation Report"
+        "400":
+          description: "Bad request due to invalid input or missing parameters."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid request body or missing parameters."
+        "500":
+          description: "Server error, failure during document type detection."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error occurred while determining document type."
