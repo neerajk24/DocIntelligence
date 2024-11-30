@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Queue & Applications API Documentation
-  description: API to manage queue operations including creation, retrieval, updating, and deletion of queues, and application filtering based on queue rules.
+  title: OCR's API Documentation
+  description: API present here are for Document Intelligence Services which works based on information gained by OCR model. Like getting data from Doc or Checking weather given data matches data given in given Doc.
   version: 1.0.0
 
 servers:
