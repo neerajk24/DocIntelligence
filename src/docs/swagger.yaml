@@ -5,10 +5,10 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost:3300
-    description: Local development server
   - url: https://ocrserverdemo-cfbqbyaacyeuf3hy.canadacentral-01.azurewebsites.net
     description: Deployment server
+  - url: http://localhost:3300
+    description: Local development server
 
 tags:
   - name: ORC-Intelligence
