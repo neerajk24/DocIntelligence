@@ -7,7 +7,7 @@ info:
 servers:
   - url: http://localhost:3300
     description: Local development server
-  - url: http://_____:3300
+  - url: https://ocrserverdemo-cfbqbyaacyeuf3hy.canadacentral-01.azurewebsites.net
     description: Deployment server
 
 tags:
